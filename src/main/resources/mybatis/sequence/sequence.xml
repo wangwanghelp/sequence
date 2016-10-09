@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Sequence">
+
+	<resultMap id="BankResultMap" type="Sequence">
+		<result column="seq_name" property="seqName" />
+		<result column="cur" property="cur" />
+		<result column="max" property="max" />
+		<result column="min" property="min" />
+		<result column="step" property="step" />
+		<result column="count" property="count" />
+		<result column="is_loop" property="loop" />
+	</resultMap>
+
+	<sql id="BASE_COLUMN">seq_name,cur,max,min,step,count,is_loop,modify_time,create_time</sql>
+
+	<select id="queryBySeqName" resultMap="BankResultMap"
+		parameterType="string">
+		SELECT <include refid="BASE_COLUMN"></include> FROM sequence where seq_name = #{seqName} for update
+	</select>
+	
+	<insert id="insert" parameterType="Sequence">
+		insert into sequence(<include refid="BASE_COLUMN"></include>) values(#{seqName},#{cur},#{max},#{min},#{step},#{count}, #{loop},now(),now())
+	</insert>
+	
+	<update id="update" parameterType="java.util.Map">
+		update sequence set cur = #{cur},modify_time=now() where seq_name=#{seqName}
+	</update>
+</mapper>
